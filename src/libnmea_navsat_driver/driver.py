@@ -37,6 +37,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import NavSatFix, NavSatStatus, TimeReference
 from geometry_msgs.msg import TwistStamped, QuaternionStamped
+from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 from tf_transformations import quaternion_from_euler
 from libnmea_navsat_driver.checksum_utils import check_nmea_checksum
 from libnmea_navsat_driver import parser
@@ -49,6 +50,7 @@ class Ros2NMEADriver(Node):
         self.fix_pub = self.create_publisher(NavSatFix, 'fix', 10)
         self.vel_pub = self.create_publisher(TwistStamped, 'vel', 10)
         self.heading_pub = self.create_publisher(QuaternionStamped, 'heading', 10)
+        self.gga_pub = self.create_publisher(DiagnosticStatus, 'gga', 10)
 
         self.time_ref_source = self.declare_parameter('time_ref_source', 'gps').value
         self.use_RMC = self.declare_parameter('useRMC', False).value
@@ -154,6 +156,17 @@ class Ros2NMEADriver(Node):
             current_fix.position_covariance_type = NavSatFix.COVARIANCE_TYPE_APPROXIMATED
 
             data = parsed_sentence['GGA']
+
+            # Publish all GGA data as a DiagnosticStatus message
+            gga_status = DiagnosticStatus()
+            gga_status.level = DiagnosticStatus.OK
+            gga_status.name = "GGA Data"
+            gga_status.message = "Full GGA sentence data"
+            gga_status.hardware_id = frame_id
+            for key, value in data.items():
+                gga_status.values.append(KeyValue(key=key, value=str(value)))
+            self.gga_pub.publish(gga_status)
+
             if self.use_GNSS_time:
                 current_fix.header.stamp = rclpy.time.Time(seconds=data['utc_time'][0], nanoseconds=data['utc_time'][1]).to_msg()
 
