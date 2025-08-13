@@ -1,0 +1,35 @@
+gps_ublox:
+  ros__parameters:
+    # --- ublox GPS ---
+    # Serial port settings
+    port: "/dev/ttyACM0"
+    baud: 9600
+    # ROS-specific settings
+    frame_id: "gps_ublox_link"
+    time_ref_source: "gps_ublox"
+    # NMEA message parsing options
+    useRMC: False
+
+gps_rise:
+  ros__parameters:
+    # --- rise GPS ---
+    # Serial port settings
+    port: "/dev/ttyUSB0"
+    baud: 9600
+    # ROS-specific settings
+    frame_id: "gps_rise_link"
+    time_ref_source: "gps_rise"
+    # NMEA message parsing options
+    useRMC: False
+
+gps_img:
+  ros__parameters:
+    # --- img GPS ---
+    # Serial port settings
+    port: "/dev/ttyUSB1"
+    baud: 9600
+    # ROS-specific settings
+    frame_id: "gps_img_link"
+    time_ref_source: "gps_img"
+    # NMEA message parsing options
+    useRMC: False
