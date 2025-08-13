@@ -16,7 +16,13 @@ def generate_launch_description():
         name='gps_primary',
         output='screen',
         emulate_tty=True,
-        parameters=[params_file]
+        parameters=[params_file],
+        remappings=[
+            ("/fix", "primary/fix"),
+            ("/heading", "primary/heading"),
+            ("/vel", "primary/vel"),
+            ("/time_reference", "primary/time_reference"),
+        ]
     )
 
     # Node for the secondary GPS device
@@ -26,7 +32,13 @@ def generate_launch_description():
         name='gps_secondary',
         output='screen',
         emulate_tty=True,
-        parameters=[params_file]
+        parameters=[params_file],
+        remappings=[
+            ("/fix", "secondary/fix"),
+            ("/heading", "secondary/heading"),
+            ("/vel", "secondary/vel"),
+            ("/time_reference", "secondary/time_reference"),
+        ]
     )
 
     return LaunchDescription([
