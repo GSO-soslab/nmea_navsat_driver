@@ -163,13 +163,17 @@ list of tuples where each tuple is a field name, conversion function and index
 into the split sentence"""
 parse_maps = {
     "GGA": [
-        ("fix_type", int, 6),
+        ("fix_type", safe_int, 6),
         ("latitude", convert_latitude, 2),
         ("latitude_direction", str, 3),
         ("longitude", convert_longitude, 4),
         ("longitude_direction", str, 5),
         ("altitude", safe_float, 9),
+        ("altitude_units", str, 10),
         ("mean_sea_level", safe_float, 11),
+        ("geoid_separation_units", str, 12),
+        ("diff_age", safe_float, 13),
+        ("station_id", str, 14),
         ("hdop", safe_float, 8),
         ("num_satellites", safe_int, 7),
         ("utc_time", convert_time, 1),
@@ -210,7 +214,9 @@ def parse_nmea_sentence(nmea_sentence):
         logger.debug("Regex didn't match, sentence not valid NMEA? Sentence was: %s"
                      % repr(nmea_sentence))
         return False
-    fields = [field.strip(',') for field in nmea_sentence.split(',')]
+    
+    sentence_body = nmea_sentence.split('*')[0]
+    fields = sentence_body.split(',')
 
     # Ignore the $ and talker ID portions (e.g. GP)
     sentence_type = fields[0][3:]
@@ -224,9 +230,15 @@ def parse_nmea_sentence(nmea_sentence):
 
     parsed_sentence = {}
     for entry in parse_map:
-        parsed_sentence[entry[0]] = entry[1](fields[entry[2]])
+        if entry[2] < len(fields):
+            parsed_sentence[entry[0]] = entry[1](fields[entry[2]])
+        else:
+            parsed_sentence[entry[0]] = entry[1]("")
 
     if sentence_type == "RMC":
-        parsed_sentence["utc_time"] = convert_time_rmc(fields[9], fields[1])
+        if 9 < len(fields) and 1 < len(fields):
+            parsed_sentence["utc_time"] = convert_time_rmc(fields[9], fields[1])
+        else:
+            parsed_sentence["utc_tome"] = convert_time_rmc("", "")
 
     return {sentence_type: parsed_sentence}

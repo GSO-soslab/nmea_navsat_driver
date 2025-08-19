@@ -22,6 +22,7 @@ def generate_launch_description():
             ("/heading", "gps_ublox/heading"),
             ("/vel", "gps_ublox/vel"),
             ("/time_reference", "gps_ublox/time_reference"),
+            ("/gga", "gps_ublox/gga"),
         ]
     )
 
@@ -38,6 +39,7 @@ def generate_launch_description():
             ("/heading", "gps_rise/heading"),
             ("/vel", "gps_rise/vel"),
             ("/time_reference", "gps_rise/time_reference"),
+            ("/gga", "gps_rise/gga"),
         ]
     )
 
@@ -54,6 +56,7 @@ def generate_launch_description():
             ("/heading", "gps_img/heading"),
             ("/vel", "gps_img/vel"),
             ("/time_reference", "gps_img/time_reference"),
+            ("/gga", "gps_img/gga"),
         ]
     )
 
